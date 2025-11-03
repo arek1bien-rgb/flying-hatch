@@ -1,66 +1,41 @@
-const canvas = document.getElementById('stars');
-const ctx = canvas.getContext('2d');
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-let stars = [];
-let stickers = [];
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const stickerCount = 12;
+const stickers = [];
+
 const img = new Image();
-img.src = 'sticker.png'; // <- tu wrzucisz swój plik z naklejką
+img.src = "sticker.png";
 
-// GWIAZDKI
-for (let i = 0; i < 150; i++) {
-  stars.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 1.5,
-    o: Math.random()
-  });
-}
-
-// STICKERY
-for (let i = 0; i < 15; i++) {
-  stickers.push({
-    x: Math.random() * canvas.width,
-     y: Math.random() * canvas.height,
-    vx: (Math.random() - 0.5) * 0.6,
-    vy: (Math.random() - 0.5) * 0.6,
-    size: 70 + Math.random() * 40
-  });
-}
-
-function drawStars() {
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (let s of stars) {
-    s.o += (Math.random() - 0.5) * 0.05;
-    if (s.o < 0) s.o = 0;
-    if (s.o > 1) s.o = 1;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = rgba(255,255,255,${s.o});
-    ctx.fill();
+img.onload = () => {
+  for (let i = 0; i < stickerCount; i++) {
+    stickers.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      dx: (Math.random() - 0.5) * 0.8,
+      dy: (Math.random() - 0.5) * 0.8,
+      size: 100 + Math.random() * 40
+    });
   }
-}
-
-function drawStickers() {
-  for (let s of stickers) {
-    s.x += s.vx;
-    s.y += s.vy;
-    if (s.x < 0  s.x + s.size > canvas.width) s.vx *= -1;
-    if (s.y < 0  s.y + s.size > canvas.height) s.vy *= -1;
-    ctx.drawImage(img, s.x, s.y, s.size, s.size);
-  }
-}
+  animate();
+};
 
 function animate() {
-  drawStars();
-  drawStickers();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(0,0,30,0.7)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (const s of stickers) {
+    ctx.drawImage(img, s.x, s.y, s.size, s.size);
+    s.x += s.dx;
+    s.y += s.dy;
+
+    if (s.x <= 0  s.x + s.size >= canvas.width) s.dx *= -1;
+    if (s.y <= 0  s.y + s.size >= canvas.height) s.dy *= -1;
+  }
+
   requestAnimationFrame(animate);
 }
-
-img.onload = animate;
-
-window.addEventListener('resize', () => {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-});
